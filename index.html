@@ -694,9 +694,11 @@ function renderTopic(){
         out += '<div style="display:flex;align-items:center;gap:6px;padding:.5rem .875rem;background:var(--grl);border-bottom:1px solid var(--bd)">';
         out += '<span>&#128196;</span><span style="font-size:12px;font-weight:500;flex:1">'+H(df.name)+'</span>';
         out += '<a href="'+df.data+'" target="_blank" download="'+H(df.name)+'" class="btn btn-xs">&#8595; Download</a></div>';
-        if(df.type==='application/pdf'){
-          out += '<embed src="'+df.data+'" type="application/pdf" width="100%" height="480px">';
-        } else if(df.type.startsWith('image/')){
+        if(df.isDriveUrl){
+  out += '<iframe src="'+df.data+'" width="100%" height="480px" frameborder="0" allowfullscreen></iframe>';
+} else if(df.type==='application/pdf'){
+  out += '<embed src="'+df.data+'" type="application/pdf" width="100%" height="480px">';
+} else if(df.type.startsWith('image/')){
           out += '<img src="'+df.data+'" style="max-width:100%;display:block">';
         }
         out += '</div>';
