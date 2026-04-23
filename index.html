@@ -264,7 +264,7 @@ textarea{resize:vertical;min-height:80px}
                   <button class="btn btn-p btn-sm" onclick="document.getElementById('te-file-input').click()">&#8679; Dokument hinzufügen</button>
                 </div>
                 <div id="te-file-list" style="display:flex;flex-direction:column;gap:5px;margin-bottom:.5rem"></div>
-                <input type="file" id="te-file-input" accept="application/pdf,image/*" multiple style="display:none" onchange="teUploadDocFiles(this)">
+                <input type="file" id="te-file-input" accept="application/pdf,image/*" multiple style="display:none" onchange="teUploadDocFiles(this)"><div style="display:flex;gap:6px;margin-top:.5rem"><input type="text" id="te-drive-url" placeholder="Google Drive Link einfügen..." style="flex:1"><button class="btn btn-p btn-sm" onclick="teAddDriveUrl()">+ Link</button></div>
               </div>
               <div><label class="lbl">Oder: Text-Inhalt (Fallback wenn kein Dokument hochgeladen)</label><textarea id="te-doccontent" placeholder="Text-Inhalt des offiziellen Dokuments..." style="min-height:80px"></textarea></div>
               <div style="border-top:1px solid var(--bd);padding-top:.875rem;margin-top:.875rem">
@@ -1395,7 +1395,18 @@ function teRenderFileList(){
     c.appendChild(row);
   });
 }
-
+function teAddDriveUrl(){
+  const url=document.getElementById('te-drive-url').value.trim();
+  if(!url) return;
+  if(!teCurrentTopicId){alert('Bitte erst Thema auswählen.');return;}
+  const m=url.match(/\/d\/([a-zA-Z0-9_-]{10,})/);
+  const fileId=m?m[1]:null;
+  if(!fileId){alert('Ungültiger Google Drive Link.');return;}
+  const embedUrl='https://drive.google.com/file/d/'+fileId+'/preview';
+  if(!Array.isArray(docFiles[teCurrentTopicId]))docFiles[teCurrentTopicId]=[];
+  docFiles[teCurrentTopicId].push({name:'Dokument (Drive)',type:'application/pdf',size:0,data:embedUrl,isDriveUrl:true});
+  S.set('docfiles',docFiles).then(()=>{teRenderFileList();document.getElementById('te-drive-url').value='';});
+}
 function teUpdateFileStatus(){ teRenderFileList(); }
 
 function teUploadDocFiles(input){
